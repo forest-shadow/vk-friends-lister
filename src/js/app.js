@@ -1,3 +1,5 @@
+'use strict';
+
 const app = require("./func.js");
 
 function pageLoad() {
@@ -68,20 +70,15 @@ function vkAddFriendToList(uid) {
 function uiRemoveFriendItem(e, listedFriendsIds){
     e.preventDefault();
     let currentFriendId = e.target.closest('.friend-item').dataset.uid;
-    listedFriendsIds.filter((el)=>{
-        return !el === currentFriendId;
-    });
-    console.log(listedFriendsIds);
+    listedFriendsIds.splice( listedFriendsIds.indexOf(currentFriendId), 1 );
     e.target.closest('.friend-item').remove();
 }
 
 function uiAddFriendToList(e, listedFriendsIds) {
     e.preventDefault();
-
     let currentFriendId = e.target.closest('.friend-item').dataset.uid;
     listedFriendsIds.push(currentFriendId);
     vkAddFriendToList(currentFriendId);
-    console.log(listedFriendsIds);
 }
 
 pageLoad()

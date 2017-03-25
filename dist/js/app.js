@@ -13,6 +13,8 @@
         s(r[o]);
     }return s;
 })({ 1: [function (require, module, exports) {
+        'use strict';
+
         var app = require("./func.js");
 
         function pageLoad() {
@@ -83,20 +85,15 @@
         function uiRemoveFriendItem(e, listedFriendsIds) {
             e.preventDefault();
             var currentFriendId = e.target.closest('.friend-item').dataset.uid;
-            listedFriendsIds.filter(function (el) {
-                return !el === currentFriendId;
-            });
-            console.log(listedFriendsIds);
+            listedFriendsIds.splice(listedFriendsIds.indexOf(currentFriendId), 1);
             e.target.closest('.friend-item').remove();
         }
 
         function uiAddFriendToList(e, listedFriendsIds) {
             e.preventDefault();
-
             var currentFriendId = e.target.closest('.friend-item').dataset.uid;
             listedFriendsIds.push(currentFriendId);
             vkAddFriendToList(currentFriendId);
-            console.log(listedFriendsIds);
         }
 
         pageLoad().then(vkConnect()).then(vkLoadFriends()).then(function () {

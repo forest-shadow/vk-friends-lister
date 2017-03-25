@@ -41,14 +41,7 @@
                     <div class="friends-list__header">
                         <h3>Frinds in list</h3>
                     </div>
-                    <div id="customFriendsList"  class="friends-list__container">
-                        <div class="friend-item">
-                            <div class="friend-item__avatar">
-                                <img src="./dist/img/camera_100.png" alt="" class="friends-item__photo">
-                            </div>
-                            <div class="friends-item__name">Test Name</div>
-                            <a class="friends-item__action" href="#"><i class="icon remove"></i></a>
-                        </div>
+                    <div id="customFriendsList" class="friends-list__container">
                     </div>
                 </div>
             </div>
@@ -78,7 +71,7 @@
 
 <script id="friendTemplateListed" type="text/x-handlebars-template">
     {{#each friends}}
-    <div class="friend-item">
+    <div class="friend-item" data-uid="{{uid}}">
         <div class="friend-item__avatar">
             <img src="{{photo_100}}" alt="{{first_name}} {{last_name}}" class="friends-item__photo">
         </div>
