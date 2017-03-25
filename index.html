@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Vk Friends Lister</title>
+    <link rel="stylesheet" href="./dist/css/styles.css">
+</head>
+
+<body>
+<div class="container">
+    <h1>Vk Friends Lister App</h1>
+
+    <div class="panel">
+        <div class="panel__header">
+            <h2>Choose Friends</h2>
+        </div>
+        <div class="panel__columns">
+            <div class="panel__column">
+                <div class="panel__filter">
+                    <div class="input__container input__container--find">
+                        <i class="icon search"></i>
+                        <input type="text" placeholder="Start enter friend's man">
+                    </div>
+                </div>
+                <div class="panel__friends-list panel__friends-list--initial">
+                    <div class="friends-list__header">
+                        <h3>Your friends</h3>
+                    </div>
+                    <div class="friends-list__container">
+                        <div class="friend-item">
+                            <div class="friend-item__avatar">
+                                <img src="./dist/img/camera_100.png" alt="" class="friends-item__photo">
+                            </div>
+                            <div class="friends-item__name">Test Name</div>
+                            <a class="friends-item__action" href="#"><i class="icon add"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel__column panel__column--custom-list">
+                <div class="panel__filter">
+                    <div class="input__container">
+                        <i class="icon search"></i>
+                        <input type="text" placeholder="Start enter friend's man">
+                    </div>
+                </div>
+                <div class="panel__friends-list panel__friends-list--custom">
+                    <div class="friends-list__header">
+                        <h3>Frinds in list</h3>
+                    </div>
+                    <div class="friends-list__container">
+                        <div class="friend-item">
+                            <div class="friend-item__avatar">
+                                <img src="./dist/img/camera_100.png" alt="" class="friends-item__photo">
+                            </div>
+                            <div class="friends-item__name">Test Name</div>
+                            <a class="friends-item__action" href="#"><i class="icon remove"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel__action-btns">
+            <button id="save">Save Custom List</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="./dist/js/app.js"></script>
+
+<script type="text/x-handlebars-template"></script>
+</body>
+</html>

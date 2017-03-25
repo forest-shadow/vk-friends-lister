@@ -1,0 +1,173 @@
+@import "../../bower_components/bourbon5/core/_bourbon.scss";
+@import "../../bower_components/neat/core/_neat.scss";
+@import "../../bower_components/normalize-scss/sass/_normalize.scss";
+@import "../../bower_components/bitters/core/_base.scss";
+
+body {
+  margin: 0;
+  background: #F6F7F2;
+}
+
+$carrot: #ff8663;
+
+$panel-grid: (
+  columns: 12,
+  gutter: 0,
+);
+
+.required {
+  color: #E26E67;
+}
+
+button,
+input[type="submit"]{
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+button.add,
+input[type="submit"].add{
+  background: #2CC990;
+  margin-right: 20px;
+}
+
+button.delete {
+  background: #E26E67;
+}
+
+.container {
+  @include grid-container;
+  width: 90%;
+  margin: 0 auto;
+  padding-top: 30px;
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 3em;
+    text-decoration: underline;
+  }
+}
+
+i.icon {
+  content: '';
+  display: block;
+}
+
+.input__container {
+  position: relative;
+
+  i {
+    @include position(absolute, 12px 0 0 10px);
+  }
+}
+
+i.icon.search {
+  @include size(13px, 15px);
+  background: url('../img/search.png') left top no-repeat;
+}
+
+i.icon.add {
+  @include size(16px, 16px);
+  background: url('../img/add.png') left top no-repeat;
+}
+
+i.icon.remove {
+  @include size(14px, 14px);
+  background: url('../img/remove.png') left top no-repeat;
+}
+
+
+.panel {
+  width: 900px;
+  margin: 0 auto;
+
+  .panel__header {
+    background: $carrot;
+    color: #fff;
+    padding: 10px 20px;
+
+    h2 {
+      margin-bottom: 0;
+    }
+  }
+
+  .panel__columns {
+    @include grid-container();
+    background: #fff;
+
+    .panel__column {
+      @include grid-column(6, $panel-grid);
+
+      .panel__filter {
+        padding: 10px 20px;
+        background: #ddd;
+        position: relative;
+
+        input {
+          margin-bottom: 0;
+          padding-left: 32px;
+        }
+      }
+
+      &:first-child {
+        margin-left: -1px;
+        border-right: 1px solid #ddd;
+      }
+    }
+
+    .panel__friends-list--initial {
+      padding: 10px 20px 0 20px;
+    }
+
+    .panel__friends-list--custom {
+      padding: 10px 20px 0 20px;
+    }
+
+    .friends-list__header {
+      border-bottom: 1px solid #ddd;
+      h3 {
+        margin-bottom: 10px;
+      }
+    }
+
+    .friend-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      height: 127px;
+
+      &:hover,
+      &.active {
+        background: #f0f0f0;
+      }
+    }
+
+    .friend-item__avatar {
+      @include size(100px);
+      border-radius:50%;
+      overflow: hidden;
+      margin-right: 20px;
+    }
+
+    .friends-item__name {
+      width: 50%;
+    }
+
+    .friends-item__action {
+      margin-left: auto;
+    }
+  }
+
+  .panel__action-btns {
+    @include clearfix;
+    background: $carrot;
+    color: #fff;
+    padding: 10px 20px;
+
+    button {
+      float: right;
+    }
+  }
+}
