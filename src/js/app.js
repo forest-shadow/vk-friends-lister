@@ -1,70 +1,94 @@
 const app = require("./func.js");
 
-document.cookie = "username=John Doe; expires=session; path=/";
-document.cookie = "randomName=randomValue; expires=session; path=/";
-document.cookie = "cookieName=cookieValue; expires=Mo, 18 Dec 2017 12:00:00 UTC; path=/";
-
-// Cookies Table
-let cookiesTableBody = document.querySelector('.container .cookies-table tbody');
-
-let cookiesArr = app.getCookiesArr();
-if(cookiesArr.length)
-    app.renderCookiesRows(cookiesArr, cookiesTableBody);
-else {
-    app.renderEmptyCookiesRow( cookiesTableBody );
+function pageLoad() {
+    return new Promise( ( resolve, reject ) => {
+        if( document.readyState == 'complete' ) {
+            resolve();
+        } else {
+            window.onload = resolve;
+        }
+    });
 }
 
-cookiesTableBody.addEventListener('click', (e) => {
-    let deleteCookieId,
-        deleteCookieObj,
-        confirmQuestion;
-    let cookiesArr = app.getCookiesArr();
-    if(e.target.hasAttributes('class', 'delete')) {
-        deleteCookieId = parseInt(e.target.parentNode.parentNode.dataset.cookieId);
-        deleteCookieObj = app.getCookieObjById(cookiesArr, deleteCookieId);
-        confirmQuestion = window.confirm(`Delete cookie '${deleteCookieObj.cookieName}'?`);
-    }
+function vkConnect() {
+    return new Promise( ( resolve,reject ) => {
+        VK.init( {
+            apiId: 5267932
+        } );
 
-    if(confirmQuestion) {
-        app.deleteCookieByCookieString(deleteCookieObj.cookieString);
+        VK.Auth.login((response) => {
+            if(response.status === 'connected') {
+                resolve(response);
+            } else {
+                reject( new Error( 'App dont pass Autorization process.' ) );
+            }
+        })
+    });
+}
 
-        if(cookiesArr.length!==1) {
-            app.updateCookiesTable(cookiesTableBody);
-        } else {
-            app.renderEmptyCookiesRow( cookiesTableBody );
-        }
-    }
-});
+function vkLoadFriends() {
+    return new Promise((resolve, reject) => {
+        VK.api('friends.get', { 'fields': 'nickname,photo_100' }, (response) => {
+            if( response.error ) {
+                reject( new Error(response.error.error_msg) );
+            } else {
+                let friendTemplateSrc = document.getElementById('friendTemplate').innerHTML,
+                    friendTemplateFn = Handlebars.compile(friendTemplateSrc),
+                    friendsResponse = response.response,
+                    friendTemplateCompiled = friendTemplateFn({ friends: friendsResponse} );
+console.log(friendsResponse);
+                document.getElementById('friendsListInitial').innerHTML = friendTemplateCompiled;
+                resolve();
+            }
+        });
+    });
+}
 
+function vkAddFriendToList(uid) {
+    return new Promise((resolve, reject) => {
+        VK.api( 'users.get', {
+            'user_ids': uid,
+            'fields': 'nickname,photo_100'
+        }, (response) => {
+            if( response.error ) {
+                reject( new Error(response.error.error_msg) );
+            } else {
+                let friendTemplateSrc = document.getElementById('friendTemplateListed').innerHTML,
+                    friendTemplateFn = Handlebars.compile(friendTemplateSrc),
+                    friendsResponse = response.response,
+                    friendTemplateCompiled = friendTemplateFn({ friends: friendsResponse} );
+                console.log(friendsResponse);
+                document.getElementById('customFriendsList').insertAdjacentHTML('beforeend', friendTemplateCompiled);
+                resolve();
+            }
+        });
+    });
+}
 
-// 'Add Cookie' form
-let cookieForm = document.forms.namedItem('add-cookie'),
-    formInputs = cookieForm.querySelectorAll('.form-row input');
-console.log(formInputs, typeof formInputs);
+function uiRemoveFriendItem(e, listedFriendsIds){
+    e.preventDefault();
+    let currentFriendId = e.target.closest('.friend-item').dataset.uid;
+    listedFriendsIds.filter((el)=>{
+        return !el === currentFriendId;
+    });
+    console.log(listedFriendsIds);
+    e.target.closest('.friend-item').remove();
+}
 
-cookieForm.addEventListener('submit', (e) => {
+function uiAddFriendToList(e, listedFriendsIds) {
     e.preventDefault();
 
-    let cookieName = cookieForm.querySelector('.form-row input#cookie-name').value,
-        cookieValue = cookieForm.querySelector('.form-row input#cookie-value').value,
-        cookieExpires = cookieForm.querySelector('.form-row input#cookie-expires').value;
-    console.log(cookieValue);
+    let currentFriendId = e.target.closest('.friend-item').dataset.uid;
+    listedFriendsIds.push(currentFriendId);
+    vkAddFriendToList(currentFriendId);
+    console.log(listedFriendsIds);
+}
 
-    if (cookieName && cookieValue && cookieExpires) {
-        if(typeof (cookieExpires * 1) === "number") {
-            app.addCookieExpires(cookieName, cookieValue, cookieExpires);
-
-            for(let i=0; i<formInputs.length; i++) {
-                formInputs[i].value = '';
-            }
-
-            app.updateCookiesTable(cookiesTableBody);
-        } else {
-            alert('Cookie expires field is not a number!')
-        }
-
-    } else {
-        alert('Please fill all inputs!!')
-    }
-
-});
+pageLoad()
+    .then(vkConnect())
+    .then(vkLoadFriends())
+    .then(()=>{
+        let listedFriendsIds = [];
+        document.getElementById('friendsListInitial').addEventListener('click', function(e){uiAddFriendToList(e,listedFriendsIds)});
+        document.getElementById('customFriendsList').addEventListener('click', function(e){uiRemoveFriendItem(e,listedFriendsIds)} );
+    });

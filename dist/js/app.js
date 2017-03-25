@@ -1,7 +1,5 @@
 "use strict";
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 (function e(t, n, r) {
     function s(o, u) {
         if (!n[o]) {
@@ -17,68 +15,98 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })({ 1: [function (require, module, exports) {
         var app = require("./func.js");
 
-        document.cookie = "username=John Doe; expires=session; path=/";
-        document.cookie = "randomName=randomValue; expires=session; path=/";
-        document.cookie = "cookieName=cookieValue; expires=Mo, 18 Dec 2017 12:00:00 UTC; path=/";
-
-        // Cookies Table
-        var cookiesTableBody = document.querySelector('.container .cookies-table tbody');
-
-        var cookiesArr = app.getCookiesArr();
-        if (cookiesArr.length) app.renderCookiesRows(cookiesArr, cookiesTableBody);else {
-            app.renderEmptyCookiesRow(cookiesTableBody);
+        function pageLoad() {
+            return new Promise(function (resolve, reject) {
+                if (document.readyState == 'complete') {
+                    resolve();
+                } else {
+                    window.onload = resolve;
+                }
+            });
         }
 
-        cookiesTableBody.addEventListener('click', function (e) {
-            var deleteCookieId = void 0,
-                deleteCookieObj = void 0,
-                confirmQuestion = void 0;
-            var cookiesArr = app.getCookiesArr();
-            if (e.target.hasAttributes('class', 'delete')) {
-                deleteCookieId = parseInt(e.target.parentNode.parentNode.dataset.cookieId);
-                deleteCookieObj = app.getCookieObjById(cookiesArr, deleteCookieId);
-                confirmQuestion = window.confirm("Delete cookie '" + deleteCookieObj.cookieName + "'?");
-            }
+        function vkConnect() {
+            return new Promise(function (resolve, reject) {
+                VK.init({
+                    apiId: 5267932
+                });
 
-            if (confirmQuestion) {
-                app.deleteCookieByCookieString(deleteCookieObj.cookieString);
+                VK.Auth.login(function (response) {
+                    if (response.status === 'connected') {
+                        resolve(response);
+                    } else {
+                        reject(new Error('App dont pass Autorization process.'));
+                    }
+                });
+            });
+        }
 
-                if (cookiesArr.length !== 1) {
-                    app.updateCookiesTable(cookiesTableBody);
-                } else {
-                    app.renderEmptyCookiesRow(cookiesTableBody);
-                }
-            }
-        });
+        function vkLoadFriends() {
+            return new Promise(function (resolve, reject) {
+                VK.api('friends.get', { 'fields': 'nickname,photo_100' }, function (response) {
+                    if (response.error) {
+                        reject(new Error(response.error.error_msg));
+                    } else {
+                        var friendTemplateSrc = document.getElementById('friendTemplate').innerHTML,
+                            friendTemplateFn = Handlebars.compile(friendTemplateSrc),
+                            friendsResponse = response.response,
+                            friendTemplateCompiled = friendTemplateFn({ friends: friendsResponse });
+                        console.log(friendsResponse);
+                        document.getElementById('friendsListInitial').innerHTML = friendTemplateCompiled;
+                        resolve();
+                    }
+                });
+            });
+        }
 
-        // 'Add Cookie' form
-        var cookieForm = document.forms.namedItem('add-cookie'),
-            formInputs = cookieForm.querySelectorAll('.form-row input');
-        console.log(formInputs, typeof formInputs === "undefined" ? "undefined" : _typeof(formInputs));
+        function vkAddFriendToList(uid) {
+            return new Promise(function (resolve, reject) {
+                VK.api('users.get', {
+                    'user_ids': uid,
+                    'fields': 'nickname,photo_100'
+                }, function (response) {
+                    if (response.error) {
+                        reject(new Error(response.error.error_msg));
+                    } else {
+                        var friendTemplateSrc = document.getElementById('friendTemplateListed').innerHTML,
+                            friendTemplateFn = Handlebars.compile(friendTemplateSrc),
+                            friendsResponse = response.response,
+                            friendTemplateCompiled = friendTemplateFn({ friends: friendsResponse });
+                        console.log(friendsResponse);
+                        document.getElementById('customFriendsList').insertAdjacentHTML('beforeend', friendTemplateCompiled);
+                        resolve();
+                    }
+                });
+            });
+        }
 
-        cookieForm.addEventListener('submit', function (e) {
+        function uiRemoveFriendItem(e, listedFriendsIds) {
+            e.preventDefault();
+            var currentFriendId = e.target.closest('.friend-item').dataset.uid;
+            listedFriendsIds.filter(function (el) {
+                return !el === currentFriendId;
+            });
+            console.log(listedFriendsIds);
+            e.target.closest('.friend-item').remove();
+        }
+
+        function uiAddFriendToList(e, listedFriendsIds) {
             e.preventDefault();
 
-            var cookieName = cookieForm.querySelector('.form-row input#cookie-name').value,
-                cookieValue = cookieForm.querySelector('.form-row input#cookie-value').value,
-                cookieExpires = cookieForm.querySelector('.form-row input#cookie-expires').value;
-            console.log(cookieValue);
+            var currentFriendId = e.target.closest('.friend-item').dataset.uid;
+            listedFriendsIds.push(currentFriendId);
+            vkAddFriendToList(currentFriendId);
+            console.log(listedFriendsIds);
+        }
 
-            if (cookieName && cookieValue && cookieExpires) {
-                if (typeof (cookieExpires * 1) === "number") {
-                    app.addCookieExpires(cookieName, cookieValue, cookieExpires);
-
-                    for (var i = 0; i < formInputs.length; i++) {
-                        formInputs[i].value = '';
-                    }
-
-                    app.updateCookiesTable(cookiesTableBody);
-                } else {
-                    alert('Cookie expires field is not a number!');
-                }
-            } else {
-                alert('Please fill all inputs!!');
-            }
+        pageLoad().then(vkConnect()).then(vkLoadFriends()).then(function () {
+            var listedFriendsIds = [];
+            document.getElementById('friendsListInitial').addEventListener('click', function (e) {
+                uiAddFriendToList(e, listedFriendsIds);
+            });
+            document.getElementById('customFriendsList').addEventListener('click', function (e) {
+                uiRemoveFriendItem(e, listedFriendsIds);
+            });
         });
     }, { "./func.js": 2 }], 2: [function (require, module, exports) {
         function addCookie(cookieName, cookieValue) {

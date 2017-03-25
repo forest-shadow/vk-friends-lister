@@ -18,21 +18,14 @@
                 <div class="panel__filter">
                     <div class="input__container input__container--find">
                         <i class="icon search"></i>
-                        <input type="text" placeholder="Start enter friend's man">
+                        <input type="text" placeholder="Start enter friend's name">
                     </div>
                 </div>
                 <div class="panel__friends-list panel__friends-list--initial">
                     <div class="friends-list__header">
                         <h3>Your friends</h3>
                     </div>
-                    <div class="friends-list__container">
-                        <div class="friend-item">
-                            <div class="friend-item__avatar">
-                                <img src="./dist/img/camera_100.png" alt="" class="friends-item__photo">
-                            </div>
-                            <div class="friends-item__name">Test Name</div>
-                            <a class="friends-item__action" href="#"><i class="icon add"></i></a>
-                        </div>
+                    <div id="friendsListInitial" class="friends-list__container">
                     </div>
                 </div>
             </div>
@@ -41,14 +34,14 @@
                 <div class="panel__filter">
                     <div class="input__container">
                         <i class="icon search"></i>
-                        <input type="text" placeholder="Start enter friend's man">
+                        <input type="text" placeholder="Start enter friend's name">
                     </div>
                 </div>
                 <div class="panel__friends-list panel__friends-list--custom">
                     <div class="friends-list__header">
                         <h3>Frinds in list</h3>
                     </div>
-                    <div class="friends-list__container">
+                    <div id="customFriendsList"  class="friends-list__container">
                         <div class="friend-item">
                             <div class="friend-item__avatar">
                                 <img src="./dist/img/camera_100.png" alt="" class="friends-item__photo">
@@ -67,8 +60,32 @@
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+<script src="http://vk.com/js/api/openapi.js"></script>
 <script src="./dist/js/app.js"></script>
 
-<script type="text/x-handlebars-template"></script>
+<script id="friendTemplate" type="text/x-handlebars-template">
+    {{#each friends}}
+    <div class="friend-item" data-uid="{{uid}}">
+        <div class="friend-item__avatar">
+            <img src="{{photo_100}}" alt="{{first_name}} {{last_name}}" class="friends-item__photo">
+        </div>
+        <div class="friends-item__name">{{first_name}} {{last_name}} {{nickname}}</div>
+        <a class="friends-item__action" href="#"><i class="icon add"></i></a>
+    </div>
+    {{/each}}
+</script>
+
+<script id="friendTemplateListed" type="text/x-handlebars-template">
+    {{#each friends}}
+    <div class="friend-item">
+        <div class="friend-item__avatar">
+            <img src="{{photo_100}}" alt="{{first_name}} {{last_name}}" class="friends-item__photo">
+        </div>
+        <div class="friends-item__name">{{first_name}} {{last_name}} {{nickname}}</div>
+        <a class="friends-item__action" href="#"><i class="icon remove"></i></a>
+    </div>
+    {{/each}}
+</script>
 </body>
 </html>

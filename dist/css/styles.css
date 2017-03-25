@@ -289,6 +289,10 @@ i.icon.remove {
       .panel .panel__columns .panel__column:first-child {
         margin-left: -1px;
         border-right: 1px solid #ddd; }
+    .panel .panel__columns .friends-list__container {
+      height: 508px;
+      overflow: hidden;
+      overflow-y: scroll; }
     .panel .panel__columns .panel__friends-list--initial {
       padding: 10px 20px 0 20px; }
     .panel .panel__columns .panel__friends-list--custom {

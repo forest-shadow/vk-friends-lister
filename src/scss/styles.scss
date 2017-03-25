@@ -116,6 +116,12 @@ i.icon.remove {
       }
     }
 
+    .friends-list__container {
+      height: 508px;
+      overflow: hidden;
+      overflow-y: scroll;
+    }
+
     .panel__friends-list--initial {
       padding: 10px 20px 0 20px;
     }

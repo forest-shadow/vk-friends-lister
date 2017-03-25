@@ -12,6 +12,7 @@ global.$ = {
  *******************************/
 $.gulp.task( 'browserSync', function( cb ) {
   return $.browserSync( {
+    port: 63342,
     server: {
       baseDir: './'
     },
