@@ -1,11 +1,38 @@
 'use strict';
 
 global.$ = {
+  buffer: require('vinyl-buffer'),
   gulp: require('gulp'),
   gp: require( 'gulp-load-plugins' )(),
   browserSync: require( 'browser-sync' ),
-  fn: require( './gulp/functions.js')
+  fn: require( './gulp/functions.js'),
+  watchify: require('watchify')
 };
+
+function compile() {
+  let bundler = watchify( $.gp.browserify('./src/js/app.js', { debug: true }).transform(babel) );
+
+  function rebundle() {
+    bundler.bundle()
+        .pipe( $.gp.plumber({errorHandler: $.fn.onError}) )
+        .pipe(source('app.js'))
+        .pipe($.buffer())
+        .pipe($.gp.sourcemaps.init({ loadMaps: true }))
+        .pipe($.gp.sourcemaps.write('./'))
+        .pipe($.gulp.dest('./dist/js'));
+  }
+
+  // if (watch) {
+  //     bundler.on('update', function() {
+  //         console.log('-> bundling...');
+  //         rebundle();
+  //     });
+  // }
+
+  rebundle();
+}
+
+$.gulp.task('scripts', function() { return compile(); });
 
 /*******************************
  * BrowserSync Task
@@ -40,12 +67,12 @@ $.gulp.task( 'scss', function() {
  * Scripts Task
  *******************************/
 $.gulp.task( 'scripts', function() {
-  return $.gulp.src('src/js/app.js')
+  return $.gulp.src('src/js/*.js')
+      .pipe( $.gp.babel({
+          presets: ['es2015']
+      }) )
       .pipe( $.gp.plumber({errorHandler: $.fn.onError}) )
       .pipe( $.gp.browserify() )
-      .pipe( $.gp.babel({
-        presets: ['es2015']
-      }) )
       .pipe( $.gulp.dest('./dist/js') )
       .pipe( $.browserSync.stream() );
 } );

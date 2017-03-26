@@ -1,74 +1,35 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var app = require('./func.js'),
-    vk = require('./vk.js'),
-    ui = require('./ui.js');
-
-app.pageLoad().then(vk.connect()).then(vk.loadFriends()).then(function () {
-    var friendsListInitial = document.getElementById('friendsListInitial'),
-        customFriendsList = document.getElementById('customFriendsList'),
-        listedFriendsIds = [];
-    friendsListInitial.addEventListener('click', function (e) {
-        ui.moveFriendCb(e, listedFriendsIds, 'friendTemplateListed', 'customFriendsList');
-    });
-    customFriendsList.addEventListener('click', function (e) {
-        ui.moveFriendCb(e, listedFriendsIds, 'friendTemplate', 'friendsListInitial');
-    });
-
-    var dragged = void 0;
-    friendsListInitial.addEventListener('dragstart', function (e) {
-        ui.dragstartCb(e, dragged);
-    });
-    customFriendsList.addEventListener('dragover', function (e) {
-        e.preventDefault();
-    });
-    customFriendsList.addEventListener('drop', function (e) {
-        ui.dropCb(e, dragged);
-    });
-});
-},{"./func.js":2,"./ui.js":3,"./vk.js":4}],2:[function(require,module,exports){
-function pageLoad() {
-    return new Promise( ( resolve, reject ) => {
-        if( document.readyState == 'complete' ) {
-            resolve();
-        } else {
-            window.onload = resolve;
-        }
-    });
-}
-
-module.exports = { pageLoad };
-},{}],3:[function(require,module,exports){
 //import { addFriendToList } from './vk.js';
-let vk = require('./vk.js');
+var vk = require('./vk.js');
 
-function moveFriendCb(e, listedFriendsIds, templateId, containerId ) {
+function moveFriendCb(e, listedFriendsIds, templateId, containerId) {
     e.preventDefault();
-    let currentFriendItem = e.target.closest('.friend-item'),
+    var currentFriendItem = e.target.closest('.friend-item'),
         currentFriendId = currentFriendItem.dataset.uid;
     listedFriendsIds.push(currentFriendId);
     vk.moveFriend(currentFriendId, templateId, containerId);
     currentFriendItem.remove();
-    console.log(`Listed friends items ids: ${listedFriendsIds}`);
+    console.log('Listed friends items ids: ' + listedFriendsIds);
 }
 
-function dragstartCb (e, dragged) {
+function dragstartCb(e, dragged) {
     console.log('start draggin', e);
     dragged = e.target;
     e.dataTransfer.setData("text", e.target.dataset.uid);
 }
 
-function dropCb (e, dragged) {
+function dropCb(e, dragged) {
     e.preventDefault();
     console.log('dropped', e);
-    let data = e.dataTransfer.getData("text");
+    var data = e.dataTransfer.getData("text");
     vk.addFriendToList(data);
     dragged.remove();
 }
 
-module.exports = { moveFriendCb, dragstartCb, dropCb };
-},{"./vk.js":4}],4:[function(require,module,exports){
+module.exports = { moveFriendCb: moveFriendCb, dragstartCb: dragstartCb, dropCb: dropCb };
+},{"./vk.js":2}],2:[function(require,module,exports){
 function connect() {
     return new Promise( ( resolve,reject ) => {
         VK.init( {
