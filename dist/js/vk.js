@@ -30,8 +30,10 @@ function loadFriends() {
                     friendTemplateFn = Handlebars.compile(friendTemplateSrc),
                     friendsResponse = response.response,
                     friendTemplateCompiled = friendTemplateFn({ friends: friendsResponse });
-                console.log(friendsResponse);
+                //console.log(friendsResponse);
                 document.getElementById('friendsListInitial').insertAdjacentHTML('beforeend', friendTemplateCompiled);
+                localStorage.friendsListInitial = JSON.stringify(friendsResponse);
+                localStorage.friendsListTemp = JSON.stringify(friendsResponse);
                 resolve();
             }
         });

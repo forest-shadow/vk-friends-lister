@@ -18,7 +18,7 @@
                 <div class="panel__filter">
                     <div class="input__container input__container--find">
                         <i class="icon search"></i>
-                        <input type="text" placeholder="Start enter friend's name">
+                        <input id="inputListInitial" type="text" placeholder="Start enter friend's name">
                     </div>
                 </div>
                 <div class="panel__friends-list panel__friends-list--initial">
@@ -34,7 +34,7 @@
                 <div class="panel__filter">
                     <div class="input__container">
                         <i class="icon search"></i>
-                        <input type="text" placeholder="Start enter friend's name">
+                        <input id="inputListCustom" type="text" placeholder="Start enter friend's name">
                     </div>
                 </div>
                 <div class="panel__friends-list panel__friends-list--custom">
@@ -61,9 +61,9 @@
     {{#each friends}}
     <div class="friend-item" data-uid="{{uid}}" draggable="true">
         <div class="friend-item__avatar">
-            <img src="{{photo_100}}" alt="{{first_name}} {{last_name}}" class="friends-item__photo">
+            <img src="{{photo_100}}" alt="{{{first_name}}} {{{last_name}}}" class="friends-item__photo">
         </div>
-        <div class="friends-item__name">{{first_name}} {{last_name}} {{nickname}}</div>
+        <div class="friends-item__name">{{{first_name}}} {{{last_name}}} {{{nickname}}}</div>
         <a class="friends-item__action" href="#"><i class="icon add"></i></a>
     </div>
     {{/each}}
@@ -73,9 +73,9 @@
     {{#each friends}}
     <div class="friend-item" data-uid="{{uid}}">
         <div class="friend-item__avatar">
-            <img src="{{photo_100}}" alt="{{first_name}} {{last_name}}" class="friends-item__photo">
+            <img src="{{photo_100}}" alt="{{{first_name}}} {{{last_name}}}" class="friends-item__photo">
         </div>
-        <div class="friends-item__name">{{first_name}} {{last_name}} {{nickname}}</div>
+        <div class="friends-item__name">{{{first_name}}} {{{last_name}}} {{{nickname}}}</div>
         <a class="friends-item__action" href="#"><i class="icon remove"></i></a>
     </div>
     {{/each}}
